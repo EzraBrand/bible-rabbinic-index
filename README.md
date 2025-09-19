@@ -86,3 +86,10 @@ Produce the deduplicated CSV export:
 python3 scripts/export_concordance_csv.py
 ```
 
+
+Remaining tasks / notes
+-----------------------
+- Add sections per chapter in the per-book Markdown output (group or split output by chapter).
+- Fix double-word tractate names that are sometimes concatenated with page markers (e.g. "Avodah Zarah 4a:18").
+- Split Talmud `full_text` into new rows by sentence where appropriate (so long multi-sentence sections become multiple concordance rows).
+
