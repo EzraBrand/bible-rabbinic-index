@@ -1,0 +1,8 @@
+# i Kings — concordance
+
+This file was generated from `data/berakhot_concordance_export.csv` and contains 2 entries.
+
+| Bible Verse Location | Bible Verse Text | Talmud Location | Talmud Full text |
+|---|---|---|---|
+| i Kings 5:12 | which is written: “And he spoke three thousand proverbs, and his poems were a thousand and five” | Eruvin 21b:21 | The Gemara expounds further concerning King Solomon. <b>Rav Hamnuna said: What is</b> the meaning of that <b>which is written: “And he spoke three thousand proverbs, and his poems were a thousand and five”</b> (i Kings 5:12)? This <b>teaches that Solomon pronounced three thousand proverbs for each and every word of the Torah,</b> and <b>one thousand and five reasons for each and every word of the Scribes.</b> |
+| i Kings 7:26 | it contained two thousand bat ” | Eruvin 14b:7 | The Gemara rejects this possibility: <b>This cannot enter your mind, as it is written</b> with regard to the sea: “And it was a handbreadth thick, and its brim was wrought like the brim of a cup, like the petals of a lily; <b>it contained two thousand <i>bat</i>”</b> (i Kings 7:26). <b>How much is</b> the measure of <b>a <i>bat</i>? Three <i>se’a</i>,</b> as the verse states: “Concerning the ordinance of oil, the <i>bat</i> of oil, you shall offer <b>the tenth part of a <i>bat</i> out of the <i>kor</i>,</b> which is a <i>ḥomer</i> of ten <i>bat</i>, for ten <i>bat</i> are a <i>ḥomer</i>” (Ezekiel 45:14). This proves that the <i>bat</i> is a tenth of a <i>kor</i>, or three <i>se’a</i>, as a <i>kor</i> is thirty <i>se’a</i>. Consequently, the sea, which contained two thousand <i>bat</i>, <b>contained six thousand <i>se’a</i>,</b> the volume of exactly one hundred and fifty ritual baths. |
