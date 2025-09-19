@@ -1,6 +1,6 @@
 # Nahum — concordance
 
-This file was generated from `data/berakhot_concordance_export.csv` and contains 11 entries.
+This file was generated from `data/berakhot_concordance_export_bible_only.csv` and contains 11 entries.
 
 | Bible Verse Location | Bible Verse Text | Talmud Location | Talmud Full text |
 |---|---|---|---|
