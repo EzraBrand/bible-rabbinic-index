@@ -1,6 +1,7 @@
 
 # Ignore the original large input CSV file
 Berakhot - en - William Davidson Edition - English.csv
+Complete ed. Steinsaltz Talmud Bavli - in sections - combined CSV - 80k rows - 19-Sep-25.csv
 
 # Ignore generated JSON outputs
 data/*.json
