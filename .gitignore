@@ -1,0 +1,9 @@
+
+# Ignore the original large input CSV file
+Berakhot - en - William Davidson Edition - English.csv
+
+# Ignore generated JSON outputs
+data/*.json
+
+# Do NOT ignore CSV outputs (keep exports tracked)
+!data/*.csv
