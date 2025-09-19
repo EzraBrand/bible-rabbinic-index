@@ -28,6 +28,15 @@ BOOK_CANONICAL = {
     'II Samuel.': '2 Samuel',
 }
 
+# Biblical books whitelist (common English names)
+BIBLE_BOOKS = {
+    'Genesis','Exodus','Leviticus','Numbers','Deuteronomy','Joshua','Judges','Ruth',
+    '1 Samuel','2 Samuel','1 Kings','2 Kings','1 Chronicles','2 Chronicles',
+    'Ezra','Nehemiah','Esther','Job','Psalms','Proverbs','Ecclesiastes','Song of Solomon',
+    'Isaiah','Jeremiah','Lamentations','Ezekiel','Daniel','Hosea','Joel','Amos','Obadiah',
+    'Jonah','Micah','Nahum','Habakkuk','Zephaniah','Haggai','Zechariah','Malachi'
+}
+
 
 def canonicalize_book(name: str) -> str:
     name = name.strip()
@@ -106,6 +115,9 @@ def extract_from_html(html_text: str):
                 # skip entries like (see Isaiah 13:21) or (cf. Isaiah 13:21)
                 continue
             book = canonicalize_book(book)
+            # only keep biblical books
+            if book not in BIBLE_BOOKS:
+                continue
             results.append((verse_text, verse_html, book, int(m.group('ch')), int(m.group('vt'))))
     return results
 
