@@ -11,6 +11,7 @@ Usage:
 import argparse
 import csv
 from pathlib import Path
+import text_processing
 
 
 def sanitize_cell(s: str) -> str:
@@ -36,7 +37,8 @@ def main(infile: str, outdir: str):
             page = r.get('page') or ''
             section = r.get('section') or ''
             tal_loc = f"{tractate} {page}:{section}" if section else f"{tractate} {page}"
-            full_text = sanitize_cell(r.get('full_text',''))
+            raw_full = r.get('full_text','')
+            full_text = sanitize_cell(text_processing.process_full_text(raw_full))
 
             entry = (bible_loc, verse_text, tal_loc, full_text)
             books.setdefault(book, []).append(entry)
