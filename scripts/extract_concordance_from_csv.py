@@ -75,7 +75,14 @@ def extract_from_html(html_text: str):
     EXCLUDE_PREFIXES = ('see', 'cf', 'cf.', 'compare', 'vid', 'vid.')
     # find bold or strong tags
     for b in soup.find_all(['b', 'strong']):
+        # raw text from the bold tag
         bold_text = b.get_text(separator=' ', strip=True)
+        # normalize verse_text: unescape entities, collapse whitespace, trim
+        verse_text = unescape(bold_text)
+        verse_text = re.sub(r"\s+", " ", verse_text).strip()
+        # keep raw HTML of the bold span for debugging
+        verse_html = str(b)
+
         # look for the citation in the text that follows this tag
         tail = ''
         # gather following siblings text up to a certain length but stop if we hit another bold/strong
@@ -99,8 +106,7 @@ def extract_from_html(html_text: str):
                 # skip entries like (see Isaiah 13:21) or (cf. Isaiah 13:21)
                 continue
             book = canonicalize_book(book)
-            verse_text = bold_text
-            results.append((verse_text, book, int(m.group('ch')), int(m.group('vt'))))
+            results.append((verse_text, verse_html, book, int(m.group('ch')), int(m.group('vt'))))
     return results
 
 
@@ -123,7 +129,7 @@ def main(infile: str, outjson: str):
                 continue
             section = parsed['section_id']
             hits = extract_from_html(text)
-            for verse_text, book, ch, vt in hits:
+            for verse_text, verse_html, book, ch, vt in hits:
                 verse_key = f"{book} {ch}:{vt}"
                 tractate = parsed['book']
                 daf = parsed['daf']
@@ -136,6 +142,7 @@ def main(infile: str, outjson: str):
                     'page': daf,
                     'section': seg,
                     'verse_text': verse_text,
+                    'verse_html': verse_html,
                     'full_text': text
                 })
 

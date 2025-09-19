@@ -74,10 +74,16 @@ def main(infile: str, outfile: str):
     rows.sort(key=sort_key)
 
     with open(outfile, 'w', encoding='utf-8', newline='') as f:
-        w = csv.writer(f)
+        w = csv.writer(f, quoting=csv.QUOTE_ALL)
         w.writerow(['book', 'chapter', 'verse', 'tractate', 'page', 'section', 'verse_text', 'full_text'])
         for r in rows:
-            w.writerow(r)
+            # sanitize fields to avoid multiline CSV cells
+            sanitized = list(r)
+            # replace newlines in full_text and verse_text
+            if len(sanitized) >= 8:
+                sanitized[6] = re.sub(r"\s+", " ", str(sanitized[6])).strip()
+                sanitized[7] = re.sub(r"\s+", " ", str(sanitized[7])).strip()
+            w.writerow(sanitized)
 
     print('Wrote', outfile, 'rows=', len(rows))
 
