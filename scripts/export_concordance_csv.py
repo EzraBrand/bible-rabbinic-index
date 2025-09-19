@@ -3,6 +3,7 @@
 This exporter deduplicates by (verse, section) and sorts rows according to a
 traditional book ordering and numeric chapter/verse.
 """
+import argparse
 import json
 import csv
 import re
@@ -40,41 +41,50 @@ def parse_verse_key(verse_key: str):
     return (book, ch, vt)
 
 
-with open(IN, encoding='utf-8') as f:
-    data = json.load(f)
+def main(infile: str, outfile: str):
+    with open(infile, encoding='utf-8') as f:
+        data = json.load(f)
 
-# Deduplicate by (book,chapter,verse,tractate,page,section) and keep one full text per pair
-seen = set()
-rows = []
-for verse, entries in data.items():
-    for e in entries:
-        book = e.get('book', '')
-        chapter = e.get('chapter', 0)
-        verse_no = e.get('verse', 0)
-        tractate = e.get('tractate', '')
-        page = e.get('page', '')
-        section = e.get('section', '')
-        verse_text = e.get('verse_text', '')
-        full_text = e.get('full_text', '')
-        key = (book, chapter, verse_no, tractate, page, section)
-        if key in seen:
-            continue
-        seen.add(key)
-        rows.append((book, chapter, verse_no, tractate, page, section, verse_text, full_text))
-
-
-def sort_key(row):
-    book, ch, vt, tractate, page, section, _, _ = row
-    book_idx = BOOK_INDEX.get(book, 9999)
-    return (book_idx, book, ch, vt, tractate, page, section)
+    # Deduplicate by (book,chapter,verse,tractate,page,section) and keep one full text per pair
+    seen = set()
+    rows = []
+    for verse, entries in data.items():
+        for e in entries:
+            book = e.get('book', '')
+            chapter = e.get('chapter', 0)
+            verse_no = e.get('verse', 0)
+            tractate = e.get('tractate', '')
+            page = e.get('page', '')
+            section = e.get('section', '')
+            verse_text = e.get('verse_text', '')
+            full_text = e.get('full_text', '')
+            key = (book, chapter, verse_no, tractate, page, section)
+            if key in seen:
+                continue
+            seen.add(key)
+            rows.append((book, chapter, verse_no, tractate, page, section, verse_text, full_text))
 
 
-rows.sort(key=sort_key)
+    def sort_key(row):
+        book, ch, vt, tractate, page, section, _, _ = row
+        book_idx = BOOK_INDEX.get(book, 9999)
+        return (book_idx, book, ch, vt, tractate, page, section)
 
-with open(OUT, 'w', encoding='utf-8', newline='') as f:
-    w = csv.writer(f)
-    w.writerow(['book', 'chapter', 'verse', 'tractate', 'page', 'section', 'verse_text', 'full_text'])
-    for r in rows:
-        w.writerow(r)
 
-print('Wrote', OUT, 'rows=', len(rows))
+    rows.sort(key=sort_key)
+
+    with open(outfile, 'w', encoding='utf-8', newline='') as f:
+        w = csv.writer(f)
+        w.writerow(['book', 'chapter', 'verse', 'tractate', 'page', 'section', 'verse_text', 'full_text'])
+        for r in rows:
+            w.writerow(r)
+
+    print('Wrote', outfile, 'rows=', len(rows))
+
+
+if __name__ == '__main__':
+    p = argparse.ArgumentParser(description='Export concordance JSON to CSV')
+    p.add_argument('-i', '--infile', default=IN, help='Input JSON file')
+    p.add_argument('-o', '--outfile', default=OUT, help='Output CSV file')
+    args = p.parse_args()
+    main(args.infile, args.outfile)

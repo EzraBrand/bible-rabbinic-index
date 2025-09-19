@@ -6,6 +6,7 @@ then scan for <b>...</b> spans followed by parenthetical citations like (Book 6:
 
 Output: data/berakhot_concordance_csv.json mapping normalized verse keys to list of entries with daf and full text.
 """
+import argparse
 import csv
 import json
 import re
@@ -103,9 +104,8 @@ def extract_from_html(html_text: str):
     return results
 
 
-def main():
-    infile = 'Berakhot - en - William Davidson Edition - English.csv'
-    outjson = 'data/berakhot_concordance_csv.json'
+def main(infile: str, outjson: str):
+    """Process infile CSV and write normalized concordance to outjson."""
     concordance = defaultdict(list)
 
     with open(infile, newline='') as fh:
@@ -140,9 +140,15 @@ def main():
                 })
 
     # write out normalized concordance
-    with open(outjson, 'w') as outfh:
+    with open(outjson, 'w', encoding='utf-8') as outfh:
         json.dump(concordance, outfh, indent=2, ensure_ascii=False)
 
 
 if __name__ == '__main__':
-    main()
+    p = argparse.ArgumentParser(description='Extract concordance from CSV')
+    p.add_argument('-i', '--infile', default='Berakhot - en - William Davidson Edition - English.csv',
+                   help='Input CSV file (reference, html_text)')
+    p.add_argument('-o', '--outjson', default='data/berakhot_concordance_csv.json',
+                   help='Output JSON concordance file')
+    args = p.parse_args()
+    main(args.infile, args.outjson)
