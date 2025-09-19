@@ -1,4 +1,4 @@
-# bible-rabbinic-index
+# Bible Rabbinic Index
 
 Project overview
 ----------------
@@ -25,7 +25,41 @@ Key behaviors
 	are excluded from the concordance to avoid cross-references.
 - Normalization: basic canonicalization of book names is applied (e.g., `I Samuel` → `1 Samuel`).
 - Output schema: each concordance entry contains the fields: `book`, `chapter`, `verse`, `tractate`,
-	`page`, `section`, `verse_text`, and `full_text`.
+		`page`, `section`, `verse_text`, and `full_text`.
+
+Recent notes
+------------
+- The per-book Markdown files in `docs/books/` now contain Bible-only outputs (non-biblical tractates
+	such as Mishnah/Tosefta were removed). A backup of the earlier full set was kept briefly as
+	`docs/books_bible_only/` but has since been removed and the Bible-only set is now the canonical
+	`docs/books/` folder.
+- The extractor now normalizes and unescapes extracted verse text and stores a `verse_html` field in
+	the JSON for debugging. The exporter collapses whitespace and uses CSV quoting to avoid multiline
+	CSV cells.
+
+Regenerating per-book Markdown
+-----------------------------
+1. Run the extractor on your CSV to produce the normalized JSON (there is a `--infile`/`--outjson`
+	 flag on the script):
+
+```bash
+python3 scripts/extract_concordance_from_csv.py -i "path/to/input.csv" -o data/berakhot_concordance_csv.json
+```
+
+2. Export to CSV:
+
+```bash
+python3 scripts/export_concordance_csv.py -i data/berakhot_concordance_csv.json -o data/berakhot_concordance_export.csv
+```
+
+3. Generate per-book Markdown (the generator accepts `-i` and `-o`):
+
+```bash
+python3 scripts/generate_md_per_book.py -i data/berakhot_concordance_export.csv -o docs/books
+```
+
+If you want Bible-only output, run the extractor as above — it now filters to canonical Biblical
+book names by default. To change this behavior we can add a CLI flag; ask me if you want that.
 
 Requirements
 ------------
@@ -52,14 +86,3 @@ Produce the deduplicated CSV export:
 python3 scripts/export_concordance_csv.py
 ```
 
-Notes
------
-- The input CSV is ignored by Git and should be supplied outside the repository when working in a
-	shared environment.
-- The canonicalization step is minimal; expanding the canonical book-name mapping is recommended
-	for larger-scale processing.
-
-Contact and contributions
--------------------------
-Contributions are welcome. For major changes (new features, normalization rules, or different data
-sources), open a pull request with tests and a short description of the intended behavior.
