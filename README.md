@@ -1,51 +1,65 @@
 # bible-rabbinic-index
 
-This repository extracts Bible-verse citations from an English translation of the Talmud
-and builds a concordance mapping Bible references -> Talmud sections where they are cited.
+Project overview
+----------------
+This project constructs a concordance mapping Bible verses to locations in the Talmud where those
+verses are cited. The current implementation parses an English translation of a Talmud tractate and
+extracts bolded quotations followed by parenthetical citations (e.g., “(Genesis 1:5)”).
 
-Current workflow
-- Input: place the Talmud English CSV in the repository root (the file you uploaded is named:
-	`Berakhot - en - William Davidson Edition - English.csv`). This file is ignored by git.
-- Extraction: `scripts/extract_concordance_from_csv.py` — parses the CSV, uses BeautifulSoup to
-	find bolded Bible quotations and parenthetical citations, canonicalizes book names, and
-	writes `data/berakhot_concordance_csv.json` (normalized JSON output).
-- Export: `scripts/export_concordance_csv.py` — deduplicates and sorts the concordance and writes
-	`data/berakhot_concordance_export.csv` with columns:
-	`book, chapter, verse, tractate, page, section, verse_text, full_text`.
+Repository layout
+-----------------
+- `scripts/extract_concordance_from_csv.py` — extractor that parses the input CSV, uses an HTML
+	parser to identify bolded quotations and nearby parenthetical citations, canonicalizes book names,
+	and writes the normalized JSON output.
+- `scripts/export_concordance_csv.py` — exporter that deduplicates, sorts, and serializes the
+	concordance to CSV.
+- `data/berakhot_concordance_csv.json` — normalized JSON concordance produced by the extractor.
+- `data/berakhot_concordance_export.csv` — deduplicated, sorted CSV export produced by the exporter.
+- `Berakhot - en - William Davidson Edition - English.csv` — input CSV (not tracked in Git).
 
-Dependencies
-- Python 3.8+ and the following pip packages:
-	- beautifulsoup4
+Key behaviors
+-------------
+- Bold-detection: the extractor locates `<b>`/`<strong>` elements and considers adjacent text for
+	parenthetical citations.
+- Exclusions: parenthetical citations beginning with prefixes such as `see`, `cf.`, or `compare`
+	are excluded from the concordance to avoid cross-references.
+- Normalization: basic canonicalization of book names is applied (e.g., `I Samuel` → `1 Samuel`).
+- Output schema: each concordance entry contains the fields: `book`, `chapter`, `verse`, `tractate`,
+	`page`, `section`, `verse_text`, and `full_text`.
 
-Quick start
-1. Install dependencies (recommended inside a venv):
+Requirements
+------------
+- Python 3.8 or later
+- Dependencies listed in `requirements.txt` (e.g., `beautifulsoup4`)
+
+Usage
+-----
+Install dependencies (recommended within an isolated environment):
 
 ```bash
 python3 -m pip install --user -r requirements.txt
 ```
 
-2. Run the extractor (reads the CSV in repository root):
+Run the extractor (reads the CSV in the repository root):
 
 ```bash
 python3 scripts/extract_concordance_from_csv.py
 ```
 
-3. Export deduplicated, sorted CSV:
+Produce the deduplicated CSV export:
 
 ```bash
 python3 scripts/export_concordance_csv.py
 ```
 
-Outputs
-- `data/berakhot_concordance_csv.json` — JSON mapping normalized verse keys (e.g., "Genesis 1:5") to
-	a list of entries containing: book, chapter, verse, tractate (Talmud tractate), page (daf), section,
-	verse_text (the bolded text from the Talmud), and full_text (full HTML-ish section text).
-- `data/berakhot_concordance_export.csv` — CSV export with columns matching the fields above.
+Notes
+-----
+- The input CSV is ignored by Git and should be supplied outside the repository when working in a
+	shared environment.
+- The canonicalization step is minimal; expanding the canonical book-name mapping is recommended
+	for larger-scale processing.
 
-Notes and next steps
-- The extractor currently excludes parenthetical citations that begin with common prefixes like
-	"see", "cf.", "compare" and similar.
-- The book canonicalization is basic; if you want broader normalization (abbreviations, alt names),
-	I can extend the mapping.
-
-If you want me to add a lookup CLI, tests, or more robust canonicalization, tell me which and I'll add it.
+Contact and contributions
+-------------------------
+Contributions are welcome. For major changes (new features, normalization rules, or different data
+sources), open a pull request with tests and a short description of the intended behavior.
