@@ -7,3 +7,6 @@ data/*.json
 
 # Do NOT ignore CSV outputs (keep exports tracked)
 !data/*.csv
+
+# Ignore local issue draft
+docs/verse_text_issue.md
