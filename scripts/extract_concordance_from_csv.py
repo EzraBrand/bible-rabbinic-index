@@ -55,11 +55,27 @@ def canonicalize_book(name: str) -> str:
 
 def parse_ref(ref: str):
     # Expecting something like: 'Berakhot 2a:8' or 'Berakhot 2a:1-2' or 'Berakhot 2a'
+    # Also handles multi-word tractate names like: 'Rosh Hashanah 11a:3' or 'Bava Batra 22a:8'
     parts = ref.split()
     if not parts:
         return None
-    book = parts[0]
-    rest = "".join(parts[1:])
+    
+    # Find the first part that looks like a page reference (digits + 'a'/'b')
+    page_start_idx = None
+    for i, part in enumerate(parts):
+        # Look for pattern like '11a:3', '22a', '2b:10', etc.
+        if re.search(r'\d+[ab]', part):
+            page_start_idx = i
+            break
+    
+    if page_start_idx is None:
+        # No page reference found, treat entire string as tractate name
+        return None
+    
+    # Everything before the page reference is the tractate name
+    book = " ".join(parts[:page_start_idx])
+    rest = "".join(parts[page_start_idx:])
+    
     # naive parse for daf:segment
     m = re.match(r'(?P<daf>\d+[ab])[:.]?(?P<seg>\d+)?', rest)
     if not m:

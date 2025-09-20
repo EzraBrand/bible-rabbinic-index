@@ -1,4 +1,8 @@
-# Bible Rabbinic Index
+# Project overview
+----------------
+This project constructs a comprehensive concordance mapping Bible verses to their citations in Talmudic literature. The system processes the complete Steinsaltz English translation of the Babylonian Talmud, extracting bolded biblical quotations and their parenthetical citations (e.g., "(Genesis 1:5)") to create detailed cross-reference tables.
+
+The final output provides researchers with structured access to 17,000+ biblical citations across all Talmudic tractates, organized by biblical book with direct links to the Chavrutai online study platform. Rabbinic Index
 
 Project overview
 ----------------
@@ -8,88 +12,77 @@ extracts bolded quotations followed by parenthetical citations (e.g., “(Genesi
 
 Repository layout
 -----------------
-- `scripts/extract_concordance_from_csv.py` — extractor that parses the input CSV, uses an HTML
-	parser to identify bolded quotations and nearby parenthetical citations, canonicalizes book names,
-	and writes the normalized JSON output.
-- `scripts/export_concordance_csv.py` — exporter that deduplicates, sorts, and serializes the
-	concordance to CSV.
-- `data/berakhot_concordance_csv.json` — normalized JSON concordance produced by the extractor.
-- `data/berakhot_concordance_export.csv` — deduplicated, sorted CSV export produced by the exporter.
-- `Berakhot - en - William Davidson Edition - English.csv` — input CSV (not tracked in Git).
+- `scripts/extract_concordance_from_csv.py` — extractor with robust parsing logic for multi-word tractate names, HTML processing of biblical quotations, and citation normalization
+- `scripts/export_concordance_csv.py` — exporter that deduplicates entries and sorts by traditional biblical book order  
+- `scripts/generate_md_per_book.py` — markdown generator with chapter organization, Chavrutai hyperlinks, and enhanced formatting
+- `scripts/text_processing.py` — utilities for Hebrew text processing, HTML sanitization, and citation parsing
+- `data/berakhot_concordance_csv_fixed.json` — complete normalized JSON concordance (19MB, ~80k entries)
+- `data/berakhot_concordance_export_fixed.csv` — final deduplicated CSV export (17,138 entries)
+- `docs/books/` — 38 per-book markdown files with organized concordance tables
+- Input CSVs: Complete Steinsaltz Talmud data (not tracked in Git)
 
-Key behaviors
--------------
-- Bold-detection: the extractor locates `<b>`/`<strong>` elements and considers adjacent text for
-	parenthetical citations.
-- Exclusions: parenthetical citations beginning with prefixes such as `see`, `cf.`, or `compare`
-	are excluded from the concordance to avoid cross-references.
-- Normalization: basic canonicalization of book names is applied (e.g., `I Samuel` → `1 Samuel`).
-- Output schema: each concordance entry contains the fields: `book`, `chapter`, `verse`, `tractate`,
-		`page`, `section`, `verse_text`, and `full_text`.
-
-Recent notes
+Key features
 ------------
-- The per-book Markdown files in `docs/books/` now contain Bible-only outputs (non-biblical tractates
-	such as Mishnah/Tosefta were removed). A backup of the earlier full set was kept briefly as
-	`docs/books_bible_only/` but has since been removed and the Bible-only set is now the canonical
-	`docs/books/` folder.
-- The extractor now normalizes and unescapes extracted verse text and stores a `verse_html` field in
-	the JSON for debugging. The exporter collapses whitespace and uses CSV quoting to avoid multiline
-	CSV cells.
+- **Comprehensive coverage**: Processes complete Babylonian Talmud (80k+ source entries)
+- **Multi-word tractate parsing**: Correctly handles "Rosh Hashanah", "Bava Batra", "Avodah Zarah", etc.
+- **Chapter organization**: Markdown output grouped by biblical chapters with clear section headers
+- **Chavrutai integration**: Direct hyperlinks to specific Talmudic passages with section anchors
+- **Citation accuracy**: Robust HTML parsing excludes cross-references ("see", "cf.", "compare")
+- **Canonical ordering**: Output follows traditional Jewish biblical book sequence
+- **Rich metadata**: Preserves both display text and HTML source for debugging
+- **Deduplication**: Intelligent removal of duplicate citations by verse-tractate combinations
 
-Regenerating per-book Markdown
------------------------------
-1. Run the extractor on your CSV to produce the normalized JSON (there is a `--infile`/`--outjson`
-	 flag on the script):
+Data processing pipeline
+-----------------------
+The system follows a three-stage workflow:
 
-```bash
-python3 scripts/extract_concordance_from_csv.py -i "path/to/input.csv" -o data/berakhot_concordance_csv.json
-```
+1. **Extract** (`extract_concordance_from_csv.py`) - Parses Talmudic HTML text, identifies biblical quotations, extracts citations, normalizes book names, and handles multi-word tractate names correctly
 
-2. Export to CSV:
+2. **Export** (`export_concordance_csv.py`) - Deduplicates by verse-tractate combinations, sorts by traditional biblical order, produces clean CSV output
 
-```bash
-python3 scripts/export_concordance_csv.py -i data/berakhot_concordance_csv.json -o data/berakhot_concordance_export.csv
-```
+3. **Generate** (`generate_md_per_book.py`) - Creates organized markdown files with chapter sections, Chavrutai hyperlinks, and researcher-friendly formatting
 
-3. Generate per-book Markdown (the generator accepts `-i` and `-o`):
-
-```bash
-python3 scripts/generate_md_per_book.py -i data/berakhot_concordance_export.csv -o docs/books
-```
-
-If you want Bible-only output, run the extractor as above — it now filters to canonical Biblical
-book names by default. To change this behavior we can add a CLI flag; ask me if you want that.
-
-Requirements
-------------
-- Python 3.8 or later
-- Dependencies listed in `requirements.txt` (e.g., `beautifulsoup4`)
+Each stage includes comprehensive error handling, logging, and data validation to ensure accuracy across the complete dataset.
 
 Usage
 -----
-Install dependencies (recommended within an isolated environment):
+**Quick start for researchers:**
+View the generated concordance tables in `docs/books/` - each biblical book has its own markdown file with organized citations and direct links to study materials.
 
+**Processing new data:**
+
+Install dependencies:
 ```bash
 python3 -m pip install --user -r requirements.txt
 ```
 
-Run the extractor (reads the CSV in the repository root):
-
+Run complete processing pipeline:
 ```bash
-python3 scripts/extract_concordance_from_csv.py
+# 1. Extract citations from source CSV
+python3 scripts/extract_concordance_from_csv.py -i "Complete Steinsaltz CSV file" -o data/berakhot_concordance_csv_fixed.json
+
+# 2. Export to deduplicated CSV  
+python3 scripts/export_concordance_csv.py -i data/berakhot_concordance_csv_fixed.json -o data/berakhot_concordance_export_fixed.csv
+
+# 3. Generate organized markdown files
+python3 scripts/generate_md_per_book.py -i data/berakhot_concordance_export_fixed.csv -o docs/books
 ```
 
-Produce the deduplicated CSV export:
-
-```bash
-python3 scripts/export_concordance_csv.py
-```
-
-
-Remaining tasks / notes
+Technical specifications
 -----------------------
-- Add sections per chapter in the per-book Markdown output (group or split output by chapter).
-- Fix double-word tractate names that are sometimes concatenated with page markers (e.g. "Avodah Zarah 4a:18").
-- Split Talmud `full_text` into new rows by sentence where appropriate (so long multi-sentence sections become multiple concordance rows).
+- **Python 3.8+** required
+- **Dependencies**: BeautifulSoup4 for HTML parsing (see `requirements.txt`)
+- **Input format**: CSV with HTML-formatted Talmudic text columns
+- **Output formats**: JSON (intermediate), CSV (data), Markdown (presentation)
+- **Processing capacity**: Handles 80k+ entries, generates 17k+ unique citations
+- **Memory usage**: ~19MB JSON files, efficient streaming processing
+
+Data schema
+-----------
+Each concordance entry contains:
+- `book`, `chapter`, `verse` - Biblical reference components  
+- `tractate`, `page`, `section` - Talmudic location identifiers
+- `verse_text` - Extracted biblical quotation (display)
+- `verse_html` - Original HTML source (debugging)
+- `full_text` - Complete Talmudic context passage
 

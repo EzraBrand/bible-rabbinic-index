@@ -13,3 +13,6 @@ data/*.json
 
 # Ignore local issue draft
 docs/verse_text_issue.md
+
+# Ignore blog post draft
+docs/bible-talmud-concordance-project.md
