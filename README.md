@@ -4,6 +4,10 @@ This project constructs a comprehensive concordance mapping Bible verses to thei
 
 The final output provides researchers with structured access to 17,000+ biblical citations across all Talmudic tractates, organized by biblical book with direct links to the Chavrutai online study platform. Rabbinic Index
 
+Table of Contents here: https://github.com/EzraBrand/bible-rabbinic-index/blob/main/docs/BOOKS_INDEX.md
+
+See overview here: https://www.ezrabrand.com/p/biblical-citations-in-the-talmud
+
 Project overview
 ----------------
 This project constructs a concordance mapping Bible verses to locations in the Talmud where those
