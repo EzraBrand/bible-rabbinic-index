@@ -6,9 +6,11 @@ This index lists the per-book concordance markdown files in the traditional Jewi
 
 - [Genesis](books/Genesis.md)
 - [Exodus](books/Exodus.md)
-- [Leviticus](books/Leviticus.md)
+- [Leviticus Part 1 (Chapters 1-14)](books/Leviticus_part1.md)
+- [Leviticus Part 2 (Chapters 15-27)](books/Leviticus_part2.md)
 - [Numbers](books/Numbers.md)
-- [Deuteronomy](books/Deuteronomy.md)
+- [Deuteronomy Part 1 (Chapters 1-17)](books/Deuteronomy_part1.md)
+- [Deuteronomy Part 2 (Chapters 18-34)](books/Deuteronomy_part2.md)
 
 ## Nevi'im (Prophets)
 
