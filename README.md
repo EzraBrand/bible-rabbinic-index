@@ -90,3 +90,7 @@ Each concordance entry contains:
 - `verse_html` - Original HTML source (debugging)
 - `full_text` - Complete Talmudic context passage
 
+License
+-------
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
